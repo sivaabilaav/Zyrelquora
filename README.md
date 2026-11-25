@@ -17,12 +17,14 @@ Zyrelquora is a Smart Shopping Assistant web application developed using Python 
 - User registration and login
 - Product listing and product details
 - Product search and category filtering
+- Product pagination
 - Shopping cart with quantity management
 - Stock availability validation
 - Checkout and order placement
 - Cash on Delivery
 - Order history and order details
 - Order cancellation
+- User profile management
 - Shopping insights and visual analytics
 
 ## Project Status
@@ -31,7 +33,59 @@ The core development of Zyrelquora is complete. The project source code is avail
 
 ## Screenshots
 
-Project screenshots will be added here.
+### 1. Homepage
+
+![Homepage](screenshots/homepage.png)
+
+![Homepage Features](screenshots/homepage-features.png)
+
+### 2. About
+
+![About Banner](screenshots/about-banner.png)
+
+![About Content](screenshots/about-content.png)
+
+![About Offers](screenshots/about-offers.png)
+
+### 3. Products
+
+![Products](screenshots/products.png)
+
+![Products Pagination](screenshots/products-pagination.png)
+
+### 4. Shopping Cart
+
+![Shopping Cart](screenshots/cart.png)
+
+### 5. Checkout
+
+![Checkout Details](screenshots/checkout-details.png)
+
+![Checkout Payment](screenshots/checkout-payment.png)
+
+### 6. Order Management
+
+![Order Confirmation](screenshots/order-confirmation.png)
+
+![Order History](screenshots/order-history.png)
+
+### 7. Shopping Insights
+
+![Insights Overview](screenshots/insights-overview.png)
+
+![Category Distribution](screenshots/insights-category.png)
+
+![Stock and Price Charts](screenshots/insights-stock-price.png)
+
+### 8. User Profile
+
+![Profile](screenshots/profile.png)
+
+### 9. Authentication
+
+![Login](screenshots/login.png)
+
+![Registration](screenshots/register.png)
 
 ## Installation and Setup
 
@@ -42,14 +96,14 @@ Project screenshots will be added here.
 - MySQL Server
 - Git
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/sivaabilaav/Zyrelquora.git
 cd Zyrelquora
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Create and Activate a Virtual Environment
 
 **Windows:**
 
@@ -58,17 +112,15 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-### 3. Install project dependencies
-
-Install the dependencies listed in the project's `requirements.txt` file.
+### 3. Install Project Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure environment variables
+### 4. Configure Environment Variables
 
-Create a `.env` file in the project root directory and configure the required environment variables.
+Create a `.env` file in the project root directory and configure the required environment variables for your local setup.
 
 Do not upload this file to GitHub because it contains private configuration values.
 
@@ -95,9 +147,7 @@ python manage.py runserver
 
 Open the following address in your browser:
 
-```text
 http://127.0.0.1:8000/
-```
 
 ## Author
 
