@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Online Payment | Zyrelquora{% endblock %}
+{% block content %}
+
+<section class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7 col-md-9">
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 text-center">
+
+                <div class="mb-3">
+                    <i class="bi bi-shield-lock-fill text-primary"
+                       style="font-size: 3rem;"></i>
+                </div>
+
+                <h2 class="fw-bold mb-2">
+                    Secure Test Payment
+                </h2>
+
+                <p class="text-muted mb-4">
+                    You are using Razorpay Test Mode.
+                    No real money will be transferred.
+                </p>
+
+                <div class="bg-light rounded-4 p-4 mb-4">
+
+                    <p class="text-muted mb-1">
+                        Order Number
+                    </p>
+
+                    <h5 class="fw-bold">
+                        #{{ order.id }}
+                    </h5>
+
+                    <hr>
+
+                    <p class="text-muted mb-1">
+                        Amount to Pay
+                    </p>
+
+                    <h2 class="fw-bold text-primary">
+                        ₹{{ order.total_amount|floatformat:2 }}
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    id="rzp-button"
+                    class="btn btn-primary btn-lg w-100 py-3"
+                >
+                    <i class="bi bi-lock-fill me-2"></i>
+                    Pay ₹{{ order.total_amount|floatformat:2 }}
+                </button>
+
+                <p class="small text-muted mt-3 mb-0">
+                    This is a simulated payment for the
+                    Zyrelquora portfolio project.
+                </p>
+
+                <a href="{% url 'orders:checkout' %}"
+                   class="btn btn-outline-secondary mt-3">
+                    Cancel and Return to Checkout
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+    const options = {
+        key: "{{ razorpay_key_id|escapejs }}",
+
+        amount: "{{ razorpay_amount }}",
+
+        currency: "{{ razorpay_currency|escapejs }}",
+
+        name: "Zyrelquora",
+
+        description: "Test Order #{{ order.id }}",
+
+        order_id: "{{ razorpay_order_id|escapejs }}",
+
+        handler: function (response) {
+
+            const form = document.createElement("form");
+
+            form.method = "POST";
+            form.action = "{% url 'orders:payment_success' %}";
+
+            const csrfToken = "{{ csrf_token }}";
+
+            const fields = {
+                "csrfmiddlewaretoken": csrfToken,
+                "razorpay_payment_id": response.razorpay_payment_id,
+                "razorpay_order_id": response.razorpay_order_id,
+                "razorpay_signature": response.razorpay_signature
+            };
+
+            for (const name in fields) {
+
+                const input = document.createElement("input");
+
+                input.type = "hidden";
+                input.name = name;
+                input.value = fields[name];
+
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        },
+
+        modal: {
+            ondismiss: function () {
+
+                const form = document.createElement("form");
+
+                form.method = "POST";
+                form.action = "{% url 'orders:payment_failed' %}";
+
+                const csrf = document.createElement("input");
+
+                csrf.type = "hidden";
+                csrf.name = "csrfmiddlewaretoken";
+                csrf.value = "{{ csrf_token }}";
+
+                const orderInput = document.createElement("input");
+
+                orderInput.type = "hidden";
+                orderInput.name = "order_id";
+                orderInput.value = "{{ order.id }}";
+
+                form.appendChild(csrf);
+                form.appendChild(orderInput);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        },
+
+        theme: {
+            color: "#7952b3"
+        }
+    };
+
+    const razorpay = new Razorpay(options);
+
+    document.getElementById("rzp-button").onclick = function (event) {
+
+        event.preventDefault();
+        razorpay.open();
+
+    };
+
+</script>
+
+{% endblock %}

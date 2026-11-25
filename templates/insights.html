@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Shopping Insights | Zyrelquora{% endblock %}
+
+{% block content %}
+
+<section class="insights-section">
+    <div class="container">
+
+        <!-- Dashboard Heading -->
+        <div class="insights-heading">
+            <span class="insights-label">SMART SHOPPING ANALYTICS</span>
+            <h1>Shopping <span>Insights</span></h1>
+            <p>Explore your product collection through meaningful insights.</p>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="row g-4 insights-stats">
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="insight-card">
+                    <div class="insight-icon">📦</div>
+                    <p>Total Products</p>
+                    <h2>{{ total_products }}</h2>
+                    <span>Products in collection</span>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="insight-card">
+                    <div class="insight-icon">🗂️</div>
+                    <p>Categories</p>
+                    <h2>{{ total_categories }}</h2>
+                    <span>Product categories</span>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="insight-card">
+                    <div class="insight-icon">✅</div>
+                    <p>Available Products</p>
+                    <h2>{{ available_products }}</h2>
+                    <span>Currently in stock</span>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-sm-6">
+                <div class="insight-card">
+                    <div class="insight-icon">⚠️</div>
+                    <p>Out of Stock</p>
+                    <h2>{{ out_of_stock_products }}</h2>
+                    <span>Currently unavailable</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Charts -->
+        <div class="row g-4 insights-charts">
+
+            <div class="col-lg-6">
+                <div class="insight-chart-card">
+                    <h5>Category Distribution</h5>
+                    <p>Products grouped by category</p>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="insight-chart-card">
+                    <h5>Stock Overview</h5>
+                    <p>Available and out-of-stock products</p>
+                    <div class="chart-container">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="insight-chart-card">
+                    <h5>Product Price Comparison</h5>
+                    <p>Compare prices across your product collection</p>
+                    <div class="chart-container price-chart-container">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{{ category_labels|json_script:"category-labels" }}
+{{ category_values|json_script:"category-values" }}
+
+{{ product_labels|json_script:"product-labels" }}
+{{ product_prices|json_script:"product-prices" }}
+
+{{ stock_labels|json_script:"stock-labels" }}
+{{ stock_values|json_script:"stock-values" }}
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/insights.js' %}"></script>
+
+{% endblock %}

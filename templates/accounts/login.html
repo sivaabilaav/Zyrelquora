@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}Login | Zyrelquora{% endblock %}
+{% block navbar %}{% endblock %}
+{% block content %}
+
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-card">
+
+            <!-- LEFT WELCOME PANEL -->
+            <div class="auth-welcome">
+
+                <div class="auth-brand">
+                    <h2>Zyrelquora<span>.</span></h2>
+                    <p class="auth-tagline">
+                        Shop Smarter. Choose Better.
+                    </p>
+                </div>
+
+                <div class="auth-welcome-content">
+                    <h1>Welcome Back!</h1>
+                    <p>
+                        Your smarter shopping experience
+                        starts here. Sign in to explore,
+                        compare and choose better.
+                    </p>
+                </div>
+
+                <div class="auth-decoration"></div>
+
+            </div>
+
+            <!-- RIGHT LOGIN PANEL -->
+            <div class="auth-form-panel">
+
+                <div class="auth-heading">
+                    <h2>Login to Your Account</h2>
+                    <p>Enter your details to continue.</p>
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Invalid email or password. Please try again.
+                    </div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- EMAIL -->
+                    <div class="auth-input-group">
+                        <label for="{{ form.username.id_for_label }}">
+                            Email Address
+                        </label>
+                        {{ form.username }}
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div class="auth-input-group">
+                        <label for="{{ form.password.id_for_label }}">
+                            Password
+                        </label>
+
+                        <div class="auth-password-wrap">
+                            {{ form.password }}
+
+                            <button
+                                type="button"
+                                class="auth-password-toggle"
+                                data-password-toggle="{{ form.password.id_for_label }}"
+                                aria-label="Show password"
+                                aria-pressed="false">
+
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="1.8"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="auth-submit-btn">
+                        Login
+                    </button>
+
+                </form>
+
+                <p class="auth-switch">
+                    Don't have an account?
+                    <a href="{% url 'register' %}">Create Account</a>
+                </p>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block footer %}{% endblock %}

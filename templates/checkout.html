@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Checkout | Zyrelquora{% endblock %}
+{% block content %}
+<section class="container checkout-page">
+
+    <div class="text-center checkout-heading">
+        <h2 class="fw-bold">Secure Checkout</h2>
+        <p class="text-muted">
+            Complete your details to place your order.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Customer Details -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4 checkout-card">
+
+                <h4 class="fw-bold mb-4">Delivery Information</h4>
+
+                <!-- Django Messages: Single Error Display -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show rounded-3"
+                             role="alert">
+                            {{ message }}
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close">
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name"
+                                   class="form-control"
+                                   placeholder="Enter your full name"
+                                   pattern="[A-Za-z ]+"
+                                   title="Enter letters and spaces only"
+                                   required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email"
+                                   class="form-control"
+                                   placeholder="Enter your email"
+                                   required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" name="phone"
+                                   class="form-control"
+                                   placeholder="Enter your phone number"
+                                   maxlength="10"
+                                   minlength="10"
+                                   pattern="[0-9]{10}"
+                                   inputmode="numeric"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                   title="Enter a valid 10-digit phone number"
+                                   required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <textarea name="address"
+                                      class="form-control"
+                                      rows="3"
+                                      minlength="10"
+                                      placeholder="Enter your delivery address"
+                                      required></textarea>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="form-label">City</label>
+                            <input type="text" name="city"
+                                   class="form-control"
+                                   placeholder="Enter your city"
+                                   pattern="[A-Za-z ]+"
+                                   title="Enter letters and spaces only"
+                                   required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">State</label>
+                            <input type="text" name="state"
+                                   class="form-control"
+                                   placeholder="Enter your state"
+                                   pattern="[A-Za-z ]+"
+                                   title="Enter letters and spaces only"
+                                   required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">PIN Code</label>
+                            <input type="text" name="pincode"
+                                   class="form-control"
+                                   placeholder="PIN Code"
+                                   maxlength="6"
+                                   minlength="6"
+                                   pattern="[0-9]{6}"
+                                   inputmode="numeric"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                   title="Enter a valid 6-digit PIN code"
+                                   required>
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="fw-bold mb-3">Payment Method</h5>
+
+                    <div class="d-flex flex-column gap-3">
+
+                        <label class="border rounded-3 p-3 checkout-payment-option"
+                               style="cursor: pointer;">
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="payment_method"
+                                       value="Cash on Delivery"
+                                       id="cod"
+                                       checked
+                                       required>
+
+                                <span class="form-check-label fw-semibold">
+                                    Cash on Delivery
+                                </span>
+                            </div>
+
+                            <small class="text-muted ms-4">
+                                Pay when your order is delivered.
+                            </small>
+                        </label>
+
+                        <label class="border rounded-3 p-3 checkout-payment-option opacity-50"
+                               style="cursor: not-allowed;">
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="payment_method"
+                                       value="Online Payment"
+                                       id="online_payment"
+                                       disabled>
+
+                                <span class="form-check-label fw-semibold">
+                                    Online Payment
+                                </span>
+
+                                <span class="badge bg-secondary ms-2">
+                                    Currently Unavailable
+                                </span>
+                            </div>
+
+                            <small class="text-muted ms-4">
+                                Online payment will be available soon.
+                            </small>
+                        </label>
+
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary w-100 mt-4 py-3 checkout-place-order-btn">
+                        Place Order
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 checkout-card checkout-summary-card">
+
+                <h4 class="fw-bold mb-4">Order Summary</h4>
+
+                {% for item in checkout_items %}
+                    <div class="checkout-product-row">
+
+                        <div>
+                            <h6 class="mb-1">{{ item.product.name }}</h6>
+                            <small class="text-muted">
+                                Quantity: {{ item.quantity }}
+                            </small>
+                        </div>
+
+                        <span class="fw-semibold checkout-product-price">
+                            ₹{{ item.subtotal|floatformat:2 }}
+                        </span>
+
+                    </div>
+                {% endfor %}
+
+                <hr>
+
+                <div class="d-flex justify-content-between checkout-total-row">
+                    <span class="text-muted">Total</span>
+                    <h5 class="fw-bold">
+                        ₹{{ total_price|floatformat:2 }}
+                    </h5>
+                </div>
+
+                <p class="text-muted small mt-3 mb-0 checkout-note">
+                    Your order details will be confirmed before submission.
+                </p>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

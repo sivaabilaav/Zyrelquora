@@ -1,0 +1,411 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ product.name }} | Zyrelquora{% endblock %}
+{% block content %}
+
+<section class="container product-detail-section">
+
+    <a href="{% url 'shop:product_list' %}" class="back-link">
+        &larr; Back to Products
+    </a>
+
+    <div class="row g-5 align-items-center mt-3">
+
+        <!-- Product Image -->
+        <div class="col-12 col-md-6">
+            <div class="product-detail-image-wrap">
+                <img
+                    src="{% static product.image %}"
+                    alt="{{ product.name }}"
+                    class="product-detail-image"
+                >
+            </div>
+        </div>
+
+        <!-- Product Information -->
+        <div class="col-12 col-md-6">
+
+            <span class="product-category">
+                {{ product.category }}
+            </span>
+
+            <h1 class="product-detail-title">
+                {{ product.name }}
+            </h1>
+
+            <!-- Stock Status -->
+            <div class="product-stock-wrapper">
+
+                {% if not product.is_available %}
+
+                    <span class="stock-status unavailable">
+                        Currently Unavailable
+                    </span>
+
+                {% elif product.stock <= 0 %}
+
+                    <span class="stock-status out-of-stock">
+                        Out of Stock
+                    </span>
+
+                {% else %}
+
+                    <span class="stock-status in-stock">
+                        In Stock
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Description -->
+            <p class="product-detail-description">
+                {{ product.description }}
+            </p>
+
+            <!-- Price -->
+            <p class="product-detail-price">
+                ₹{{ product.price }}
+            </p>
+
+            <!-- Average Rating -->
+            <div class="product-rating-summary mb-3">
+                {% if average_rating %}
+                    <span>⭐ {{ average_rating|floatformat:1 }} / 5</span>
+                    <span>({{ review_count }} reviews)</span>
+                {% else %}
+                    <span>No ratings yet</span>
+                {% endif %}
+            </div>
+
+            <!-- Add to Cart -->
+            {% if product.is_available and product.stock > 0 %}
+
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-cart-plus"></i>
+                        Add to Cart
+                    </button>
+
+                </form>
+
+            {% else %}
+
+                <button type="button" class="btn btn-secondary btn-lg" disabled>
+                    <i class="bi bi-cart-x"></i>
+
+                    {% if not product.is_available %}
+                        Currently Unavailable
+                    {% else %}
+                        Out of Stock
+                    {% endif %}
+
+                </button>
+
+            {% endif %}
+
+            <p class="product-detail-note">
+                Make smarter shopping choices with Zyrelquora.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Product Reviews & Ratings -->
+<section class="product-reviews-section">
+
+    <div class="container">
+
+        <div class="related-products-heading">
+
+            <span>CUSTOMER FEEDBACK</span>
+
+            <h2>Customer Reviews</h2>
+
+            <p>See what customers think about this product.</p>
+
+        </div>
+
+
+        <!-- Rating Summary -->
+        <div class="review-summary mb-4">
+
+            {% if average_rating %}
+
+                <h3>{{ average_rating|floatformat:1 }} / 5</h3>
+
+                <p>
+                    ⭐ {{ review_count }} Customer Reviews
+                </p>
+
+            {% else %}
+
+                <p>Be the first to review this product!</p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Review Form -->
+        <div class="review-form-wrapper">
+
+            <h4>Write a Review</h4>
+
+            {% if user.is_authenticated %}
+
+                {% if user_has_reviewed %}
+
+                    <p>You have already reviewed this product.</p>
+
+                {% else %}
+
+                    <form
+                        method="POST"
+                        action="{% url 'shop:submit_review' product.slug %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Your Rating
+                            </label>
+
+                            {{ review_form.rating }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Your Review
+                            </label>
+
+                            {{ review_form.comment }}
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Submit Review
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            {% else %}
+
+                <p>
+                    Please
+                    <a href="{% url 'login' %}">log in</a>
+                    to write a review.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Customer Reviews -->
+        <div class="customer-reviews mt-5">
+
+            <h4 class="mb-4">What Customers Say</h4>
+
+            {% for review in reviews %}
+
+                <div class="customer-review-card mb-3">
+
+                    <h5>{{ review.user.username }}</h5>
+
+                    <p class="review-stars">
+
+                        {% for star in "12345" %}
+
+                            {% if forloop.counter <= review.rating %}
+                                ⭐
+                            {% else %}
+                                ☆
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </p>
+
+                    <p>{{ review.comment }}</p>
+
+                    <small>
+                        {{ review.created_at|date:"d M Y" }}
+                    </small>
+
+                </div>
+
+            {% empty %}
+
+                <p>No reviews yet. Your feedback matters!</p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Smart Product Recommendations -->
+{% if related_products %}
+
+<section class="related-products-section">
+
+    <div class="container">
+
+        <div class="related-products-heading">
+
+            <span>DISCOVER MORE</span>
+
+            <h2>You May Also Like</h2>
+
+            <p>Explore more products from this category.</p>
+
+        </div>
+
+        <div class="row g-4">
+
+            {% for related in related_products %}
+
+            <div class="col-6 col-md-3">
+
+                <div class="related-product-card">
+
+                    <a
+                        href="{% url 'shop:product_detail' related.slug %}"
+                        class="related-product-image-link"
+                    >
+
+                        <img
+                            src="{% static related.image %}"
+                            alt="{{ related.name }}"
+                            class="related-product-image"
+                        >
+
+                    </a>
+
+                    <div class="related-product-info">
+
+                        <span>{{ related.category.name }}</span>
+
+                        <h5>
+                            <a href="{% url 'shop:product_detail' related.slug %}">
+                                {{ related.name }}
+                            </a>
+                        </h5>
+
+                        <p>₹{{ related.price }}</p>
+
+                        <a
+                            href="{% url 'shop:product_detail' related.slug %}"
+                            class="related-view-link"
+                        >
+                            View Product →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- Recently Viewed Products -->
+{% if recent_products %}
+
+<section class="related-products-section recently-viewed-section">
+
+    <div class="container">
+
+        <div class="related-products-heading">
+
+            <span>YOUR BROWSING HISTORY</span>
+
+            <h2>Recently Viewed</h2>
+
+            <p>Continue exploring products you viewed earlier.</p>
+
+        </div>
+
+        <div class="row g-4">
+
+            {% for recent in recent_products %}
+
+            <div class="col-6 col-md-3">
+
+                <div class="related-product-card">
+
+                    <a
+                        href="{% url 'shop:product_detail' recent.slug %}"
+                        class="related-product-image-link"
+                    >
+
+                        <img
+                            src="{% static recent.image %}"
+                            alt="{{ recent.name }}"
+                            class="related-product-image"
+                        >
+
+                    </a>
+
+                    <div class="related-product-info">
+
+                        <span>{{ recent.category.name }}</span>
+
+                        <h5>
+                            <a href="{% url 'shop:product_detail' recent.slug %}">
+                                {{ recent.name }}
+                            </a>
+                        </h5>
+
+                        <p>₹{{ recent.price }}</p>
+
+                        <a
+                            href="{% url 'shop:product_detail' recent.slug %}"
+                            class="related-view-link"
+                        >
+                            View Product →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+{% endblock %}

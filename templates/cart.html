@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Your Cart | Zyrelquora{% endblock %}
+{% block content %}
+
+<!-- Cart Page Main Section -->
+<section class="container cart-section">
+
+    <!-- Cart Page Heading -->
+    <div class="cart-page-heading">
+        <span class="section-label">YOUR SHOPPING SPACE</span>
+        <h1>Your Shopping Cart</h1>
+        <p>Review your picks before making your next smart choice.</p>
+    </div>
+
+    <!-- Django Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'danger' }} alert-dismissible fade show rounded-3"
+                 role="alert">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if cart_items %}
+
+    <div class="row g-4">
+
+        <!-- Cart Products Section -->
+        <div class="col-12 col-lg-8">
+
+            <div class="cart-items-list" data-cart-items-list>
+
+                {% for product_id, item in cart_items.items %}
+
+                <article class="cart-item" data-cart-item>
+
+                    <div class="cart-item-image-wrap">
+                        <img
+                            src="{% static item.image %}"
+                            alt="{{ item.name }}"
+                            class="cart-item-image"
+                        >
+                    </div>
+
+                    <div class="cart-item-info">
+
+                        <h2>{{ item.name }}</h2>
+
+                        <span class="stock-status {{ item.stock_class }}">
+                            {{ item.stock_status }}
+                        </span>
+
+                        <div class="cart-quantity-controls">
+
+                            <form method="post"
+                                  action="{% url 'update_quantity' product_id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="decrease">
+
+                                <button type="submit"
+                                        class="quantity-btn"
+                                        aria-label="Decrease quantity">
+                                    −
+                                </button>
+                            </form>
+
+                            <span class="quantity-value">
+                                {{ item.quantity }}
+                            </span>
+
+                            <form method="post"
+                                  action="{% url 'update_quantity' product_id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="increase">
+
+                                <button type="submit"
+                                        class="quantity-btn"
+                                        aria-label="Increase quantity">
+                                    +
+                                </button>
+                            </form>
+
+                        </div>
+
+                        <span class="cart-item-price">
+                            ₹{{ item.price }} each
+                        </span>
+
+                        <form method="post"
+                              action="{% url 'remove_from_cart' product_id %}"
+                              class="cart-remove-form"
+                              data-confirm="Are you sure you want to remove this product?">
+
+                            {% csrf_token %}
+
+                            <button type="submit" class="cart-remove-btn">
+                                <i class="bi bi-trash"></i>
+                                Remove
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <div class="cart-item-subtotal">
+                        ₹{{ item.subtotal|floatformat:2 }}
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="col-12 col-lg-4">
+
+            <aside class="cart-summary">
+
+                <h2>Order Summary</h2>
+
+                <div class="cart-summary-row">
+                    <span>Items</span>
+                    <span>{{ total_items }}</span>
+                </div>
+
+                <div class="cart-summary-total">
+                    <span>Total</span>
+                    <span>₹{{ total_price }}</span>
+                </div>
+
+                <a href="{% url 'orders:checkout' %}"
+                   class="btn btn-primary w-100 mt-3">
+                    Proceed to Checkout
+                </a>
+
+                <form method="post"
+                      action="{% url 'clear_cart' %}"
+                      class="clear-cart-form"
+                      data-confirm="Are you sure you want to clear your entire cart?">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="clear-cart-btn">
+                        <i class="bi bi-trash"></i>
+                        Clear Cart
+                    </button>
+
+                </form>
+
+                <a href="{% url 'shop:product_list' %}"
+                   class="continue-shopping-link">
+                    &larr; Continue Shopping
+                </a>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <!-- Empty Cart Section -->
+    <div class="cart-empty">
+
+        <img
+            src="{% static 'images/products/empty-cart.jpg' %}"
+            alt="Shopping bag illustration"
+        >
+
+        <span class="cart-empty-label">YOUR CART IS WAITING</span>
+
+        <h2>Your Shopping Cart is Empty!</h2>
+
+        <p>
+            Looks like you haven't discovered your favourites yet.
+            Explore our collection and find something you love.
+        </p>
+
+        <a href="{% url 'shop:product_list' %}" class="cart-empty-btn">
+            <i class="bi bi-bag"></i>
+            Explore Products
+        </a>
+
+        <div class="cart-empty-note">
+            <i class="bi bi-heart"></i>
+            Smart choices start with exploring.
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

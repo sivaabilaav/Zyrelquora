@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed | Zyrelquora{% endblock %}
+{% block content %}
+<section class="container order-confirmation-section">
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 text-center mx-auto order-confirmation-card">
+
+        <!-- Success Icon -->
+        <div class="mb-3">
+            <span class="text-success fs-1 order-success-icon">✓</span>
+        </div>
+
+        <h2 class="fw-bold">Order Placed Successfully!</h2>
+
+        <p class="text-muted mt-2 order-confirmation-description">
+            Thank you for shopping with Zyrelquora.
+            Your order has been received.
+        </p>
+
+        <hr>
+
+        <!-- Order Details -->
+        <div class="text-start mx-auto order-details-box">
+
+            <!-- Order Number -->
+            <div class="order-detail-row">
+                <span class="order-detail-label">Order Number</span>
+                <strong class="order-detail-value">
+                    {{ order.order_number }}
+                </strong>
+            </div>
+
+            <!-- Customer -->
+            <div class="order-detail-row">
+                <span class="order-detail-label">Customer</span>
+                <strong class="order-detail-value">
+                    {{ order.full_name }}
+                </strong>
+            </div>
+
+            <!-- Order Total -->
+            <div class="order-detail-row">
+                <span class="order-detail-label">Order Total</span>
+                <strong class="order-detail-value">
+                    ₹{{ order.total_amount|floatformat:2 }}
+                </strong>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="order-detail-row">
+                <span class="order-detail-label">Payment Method</span>
+                <strong class="order-detail-value">
+                    {{ order.payment_method }}
+                </strong>
+            </div>
+
+            <!-- Payment Status -->
+            <div class="order-detail-row">
+                <span class="order-detail-label">Payment Status</span>
+                <strong class="order-detail-value">
+                    {{ order.payment_status }}
+                </strong>
+            </div>
+
+            <!-- Order Status -->
+            <div class="order-detail-row">
+                <span class="order-detail-label">Order Status</span>
+                <strong class="order-detail-value">
+                    {{ order.status }}
+                </strong>
+            </div>
+
+        </div>
+
+        <!-- Continue Shopping -->
+        <a href="{% url 'home' %}"
+           class="btn btn-primary mt-4 order-confirmation-btn">
+            Continue Shopping
+        </a>
+
+    </div>
+
+</section>
+{% endblock %}
