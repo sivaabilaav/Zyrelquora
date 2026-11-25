@@ -1,5 +1,7 @@
+
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}
 404 | Page Not Found - Zyrelquora
 {% endblock %}
@@ -34,7 +36,7 @@
                 Back to Homepage
             </a>
 
-            <a href="{% url 'products' %}" class="error-products-btn">
+            <a href="{% url 'shop:product_list' %}" class="error-products-btn">
                 Explore Products
             </a>
 

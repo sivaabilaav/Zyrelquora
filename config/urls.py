@@ -29,3 +29,4 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
 ]
 
+handler404 = 'core.views.custom_404'

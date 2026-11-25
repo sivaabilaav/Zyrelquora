@@ -21,3 +21,7 @@ def home(request):
 # About Page
 def about(request):
     return render(request, 'about.html')
+
+# Custom 404 Error Page
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
