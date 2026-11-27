@@ -4,6 +4,7 @@
 
 # Virtual environment
 venv/
+venv312/
 .venv/
 
 # Python cache
